@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}{{ mission.name }} - Projetos{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <span class="eyebrow">Projetos</span>
+  <h1>Projetos da missao</h1>
+  <p class="lead">Iniciativas e frentes que estao sendo desenvolvidas.</p>
+</section>
+
+<section>
+  <div class="grid">
+    {% if projects %}
+      {% for project in projects %}
+        <article class="card" style="--i: {{ loop.index0 }};">
+          <p class="meta">{{ project.status }}</p>
+          <h2>{{ project.title }}</h2>
+          <p>{{ project.description }}</p>
+        </article>
+      {% endfor %}
+    {% else %}
+      <div class="empty">Nenhum projeto cadastrado.</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

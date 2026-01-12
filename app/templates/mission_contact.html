@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}{{ mission.name }} - Contato{% endblock %}
+
+{% block content %}
+{% set social = contact.get("social", {}) %}
+
+<section class="hero">
+  <span class="eyebrow">Contato</span>
+  <h1>Fale com a missao</h1>
+  <p class="lead">Informacoes para conversar com a equipe e conhecer melhor o trabalho.</p>
+</section>
+
+<section class="details">
+  <div class="detail-card">
+    <h2>Informacoes</h2>
+    <dl>
+      <dt>Email</dt>
+      <dd>{{ contact.email or "Em breve" }}</dd>
+      <dt>Telefone</dt>
+      <dd>{{ contact.phone or "Em breve" }}</dd>
+      <dt>Endereco</dt>
+      <dd>{{ contact.address or "Em breve" }}</dd>
+      <dt>Horario</dt>
+      <dd>{{ contact.hours or "Em breve" }}</dd>
+    </dl>
+  </div>
+  <div class="detail-card">
+    <h2>Redes e links</h2>
+    {% if social %}
+      <ul>
+        {% if social.instagram %}
+          <li><a class="link" href="{{ social.instagram }}">Instagram</a></li>
+        {% endif %}
+        {% if social.facebook %}
+          <li><a class="link" href="{{ social.facebook }}">Facebook</a></li>
+        {% endif %}
+        {% if social.site %}
+          <li><a class="link" href="{{ social.site }}">Site oficial</a></li>
+        {% endif %}
+      </ul>
+    {% else %}
+      <p class="muted">Links em atualizacao.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

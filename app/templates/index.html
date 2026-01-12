@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Ide e Pregai{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <span class="eyebrow">Evangelho em movimento</span>
+  <h1>Uma vitrine simples para missoes que servem, ensinam e caminham com pessoas.</h1>
+  <p class="lead">
+    O objetivo do MVP e dar visibilidade a quem esta no campo, com dados claros
+    e sem intermediacao financeira.
+  </p>
+</section>
+
+<section>
+  <h2>Missoes ativas</h2>
+  <div class="grid">
+    {% if missions %}
+      {% for mission in missions %}
+        <article class="card" style="--i: {{ loop.index0 }};">
+          <p class="meta">{{ mission.location }}</p>
+          <h2>{{ mission.name }}</h2>
+          <p>{{ mission.description }}</p>
+          <a class="link" href="{{ url_for('public.mission_by_slug', slug=mission.slug) }}">
+            Ver missao
+          </a>
+        </article>
+      {% endfor %}
+    {% else %}
+      <div class="empty">Nenhuma missao cadastrada.</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

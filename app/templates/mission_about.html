@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}{{ mission.name }} - Sobre{% endblock %}
+
+{% block content %}
+{% set about = about or {} %}
+
+<section class="hero">
+  <span class="eyebrow">Sobre a missao</span>
+  <h1>{{ mission.name }}</h1>
+  <p class="lead">{{ about.summary or "Resumo institucional em construcao." }}</p>
+</section>
+
+<section class="details">
+  <div class="detail-card">
+    <h2>Missao</h2>
+    <p>{{ about.mission or "Missao em definicao." }}</p>
+  </div>
+  <div class="detail-card">
+    <h2>Visao</h2>
+    <p>{{ about.vision or "Visao em definicao." }}</p>
+  </div>
+</section>
+
+<section class="details">
+  <div class="detail-card">
+    <h2>Valores</h2>
+    {% if about.values %}
+      <ul>
+        {% for value in about.values %}
+          <li>{{ value }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">Valores ainda nao cadastrados.</p>
+    {% endif %}
+  </div>
+  <div class="detail-card">
+    <h2>Equipe</h2>
+    <p>{{ about.team or "Equipe em formacao." }}</p>
+  </div>
+</section>
+{% endblock %}

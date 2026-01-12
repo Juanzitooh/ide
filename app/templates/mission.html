@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}{{ mission.name }} - Ide e Pregai{% endblock %}
+
+{% block content %}
+{% set about = mission.get("about", {}) %}
+{% set projects = mission.get("projects", []) %}
+{% set help_items = mission.get("help", []) %}
+
+<section class="hero">
+  <span class="eyebrow">Missao</span>
+  <h1>{{ mission.name }}</h1>
+  <p class="lead">{{ mission.description }}</p>
+</section>
+
+<section class="details">
+  <div class="detail-card">
+    <h2>Informacoes</h2>
+    <dl>
+      <dt>Local</dt>
+      <dd>{{ mission.location }}</dd>
+      {% if about.team %}
+      <dt>Equipe</dt>
+      <dd>{{ about.team }}</dd>
+      {% endif %}
+      <dt>Slug</dt>
+      <dd>{{ mission.slug }}</dd>
+    </dl>
+    <a class="link" href="{{ url_for('public.mission_about', slug=mission.slug) }}">Conhecer a missao</a>
+  </div>
+  <div class="detail-card">
+    <h2>Verso guia</h2>
+    <blockquote>
+      <p>{{ mission.verse_text }}</p>
+      <span>{{ mission.verse_ref }}</span>
+    </blockquote>
+  </div>
+</section>
+
+<section class="details">
+  <div class="detail-card">
+    <h2>Essencia</h2>
+    {% if about.summary %}
+      <p>{{ about.summary }}</p>
+    {% else %}
+      <p class="muted">Resumo em construcao.</p>
+    {% endif %}
+    {% if about.mission %}
+      <p class="muted">Missao: {{ about.mission }}</p>
+    {% endif %}
+    {% if about.vision %}
+      <p class="muted">Visao: {{ about.vision }}</p>
+    {% endif %}
+  </div>
+  <div class="detail-card">
+    <h2>Links rapidos</h2>
+    <p class="muted">Acesse as paginas institucionais da missao.</p>
+    <a class="link" href="{{ url_for('public.mission_projects', slug=mission.slug) }}">Projetos</a>
+    <a class="link" href="{{ url_for('public.mission_help', slug=mission.slug) }}">Como ajudar</a>
+    <a class="link" href="{{ url_for('public.mission_contact', slug=mission.slug) }}">Contato</a>
+  </div>
+</section>
+
+<section>
+  <h2>Projetos em destaque</h2>
+  <div class="grid">
+    {% if projects %}
+      {% for project in projects[:2] %}
+        <article class="card" style="--i: {{ loop.index0 }};">
+          <p class="meta">{{ project.status }}</p>
+          <h2>{{ project.title }}</h2>
+          <p>{{ project.description }}</p>
+        </article>
+      {% endfor %}
+    {% else %}
+      <div class="empty">Nenhum projeto cadastrado.</div>
+    {% endif %}
+  </div>
+  <a class="link" href="{{ url_for('public.mission_projects', slug=mission.slug) }}">Ver todos os projetos</a>
+</section>
+
+<section>
+  <h2>Como ajudar</h2>
+  <div class="grid">
+    {% if help_items %}
+      {% for item in help_items[:2] %}
+        <article class="card" style="--i: {{ loop.index0 }};">
+          <h2>{{ item.title }}</h2>
+          <p>{{ item.description }}</p>
+        </article>
+      {% endfor %}
+    {% else %}
+      <div class="empty">Nenhuma forma de ajuda cadastrada.</div>
+    {% endif %}
+  </div>
+  <a class="link" href="{{ url_for('public.mission_help', slug=mission.slug) }}">Ver todas as formas de ajuda</a>
+</section>
+{% endblock %}

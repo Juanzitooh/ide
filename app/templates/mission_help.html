@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}{{ mission.name }} - Como ajudar{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <span class="eyebrow">Como ajudar</span>
+  <h1>Formas de apoiar</h1>
+  <p class="lead">Caminhos simples para apoiar quem esta servindo no campo.</p>
+</section>
+
+<section>
+  <div class="grid">
+    {% if help_items %}
+      {% for item in help_items %}
+        <article class="card" style="--i: {{ loop.index0 }};">
+          <h2>{{ item.title }}</h2>
+          <p>{{ item.description }}</p>
+        </article>
+      {% endfor %}
+    {% else %}
+      <div class="empty">Nenhuma forma de ajuda cadastrada.</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
