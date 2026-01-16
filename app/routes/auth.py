@@ -72,6 +72,10 @@ def _safe_next_url(next_url: Optional[str]) -> str:
     return next_url
 
 
+def _auth_error(message: str, status_code: int = 400):
+    return render_template("auth_error.html", message=message), status_code
+
+
 def _build_auth_url(scopes: str, state: str, nonce: str, extra: Optional[Dict[str, str]] = None) -> str:
     cfg = _oauth_config()
     params = {
@@ -105,7 +109,10 @@ def logout():
 @auth_bp.get("/auth/google")
 def google_login():
     if not _oauth_ready():
-        abort(503)
+        return _auth_error(
+            "OAuth do Google nao configurado. Defina as variaveis de ambiente.",
+            status_code=503,
+        )
 
     state = secrets.token_urlsafe(16)
     nonce = secrets.token_urlsafe(16)
@@ -118,14 +125,17 @@ def google_login():
 @auth_bp.get("/auth/google/callback")
 def google_callback():
     if not _oauth_ready():
-        abort(503)
+        return _auth_error(
+            "OAuth do Google nao configurado. Defina as variaveis de ambiente.",
+            status_code=503,
+        )
 
     if request.args.get("state") != session.get("oauth_state"):
-        abort(400)
+        return _auth_error("Estado invalido. Tente novamente.")
 
     code = request.args.get("code")
     if not code:
-        abort(400)
+        return _auth_error("Codigo de autorizacao ausente.")
 
     cfg = _oauth_config()
     token_payload = {
@@ -138,20 +148,20 @@ def google_callback():
     token_response = _post_form(GOOGLE_TOKEN_URL, token_payload)
     id_token = token_response.get("id_token")
     if not isinstance(id_token, str):
-        abort(400)
+        return _auth_error("Falha ao obter token do Google.")
 
     token_info = _tokeninfo(id_token)
     if token_info.get("aud") != cfg["client_id"]:
-        abort(400)
+        return _auth_error("Token invalido para este aplicativo.")
     if token_info.get("nonce") != session.get("oauth_nonce"):
-        abort(400)
+        return _auth_error("Nonce invalido. Tente novamente.")
     if token_info.get("email_verified") != "true":
-        abort(400)
+        return _auth_error("Email nao verificado no Google.")
 
     email = token_info.get("email", "")
     name = token_info.get("name", "") or email.split("@")[0]
     if not email:
-        abort(400)
+        return _auth_error("Email nao retornado pelo Google.")
 
     session.pop("oauth_state", None)
     session.pop("oauth_nonce", None)
@@ -163,7 +173,10 @@ def google_callback():
 @auth_bp.get("/auth/google/meet")
 def google_meet():
     if not _oauth_ready():
-        abort(503)
+        return _auth_error(
+            "OAuth do Google nao configurado. Defina as variaveis de ambiente.",
+            status_code=503,
+        )
 
     login_redirect = require_login(next_url=request.full_path)
     if login_redirect:
@@ -172,7 +185,7 @@ def google_meet():
     slug = request.args.get("slug")
     project_id = request.args.get("project_id")
     if not slug:
-        abort(400)
+        return _auth_error("Missao nao informada.")
 
     state = secrets.token_urlsafe(16)
     nonce = secrets.token_urlsafe(16)
@@ -194,13 +207,16 @@ def google_meet():
 @auth_bp.get("/auth/google/meet/callback")
 def google_meet_callback():
     if not _oauth_ready():
-        abort(503)
+        return _auth_error(
+            "OAuth do Google nao configurado. Defina as variaveis de ambiente.",
+            status_code=503,
+        )
     if request.args.get("state") != session.get("meet_oauth_state"):
-        abort(400)
+        return _auth_error("Estado invalido. Tente novamente.")
 
     code = request.args.get("code")
     if not code:
-        abort(400)
+        return _auth_error("Codigo de autorizacao ausente.")
 
     cfg = _oauth_config()
     token_payload = {
@@ -214,20 +230,20 @@ def google_meet_callback():
     access_token = token_response.get("access_token")
     id_token = token_response.get("id_token")
     if not isinstance(access_token, str) or not isinstance(id_token, str):
-        abort(400)
+        return _auth_error("Falha ao obter token do Google.")
 
     token_info = _tokeninfo(id_token)
     if token_info.get("aud") != cfg["client_id"]:
-        abort(400)
+        return _auth_error("Token invalido para este aplicativo.")
     if token_info.get("nonce") != session.get("meet_oauth_nonce"):
-        abort(400)
+        return _auth_error("Nonce invalido. Tente novamente.")
     if token_info.get("email_verified") != "true":
-        abort(400)
+        return _auth_error("Email nao verificado no Google.")
 
     current_user = get_current_user()
     email = token_info.get("email", "")
     if current_user and email and current_user.get("email") != email:
-        abort(400)
+        return _auth_error("Conta Google diferente da sessao atual.")
 
     space = _post_json(GOOGLE_MEET_CREATE_URL, {}, access_token)
     meeting_link = space.get("meetingUri")
@@ -236,20 +252,20 @@ def google_meet_callback():
     if not meeting_link and space.get("name"):
         meeting_link = f"https://meet.google.com/{space.get('name')}"
     if not meeting_link:
-        abort(500)
+        return _auth_error("Falha ao criar link do Meet.", status_code=500)
 
     target = session.pop("meet_target", {})
     slug = target.get("slug")
     project_id = target.get("project_id")
     if not slug:
-        abort(400)
+        return _auth_error("Missao nao informada.")
 
     if project_id:
         updated = update_project_meeting_link(slug, project_id, meeting_link)
     else:
         updated = update_mission_meeting_link(slug, meeting_link)
     if not updated:
-        abort(404)
+        return _auth_error("Missao ou projeto nao encontrado.", status_code=404)
 
     session.pop("meet_oauth_state", None)
     session.pop("meet_oauth_nonce", None)
