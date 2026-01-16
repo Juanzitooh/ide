@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}{{ mission.name }} - Chat{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <span class="eyebrow">Chat</span>
+  <h1>Conversas da missao</h1>
+  <p class="lead">Mensagens rapidas entre pessoas da equipe.</p>
+</section>
+
+<section class="details">
+  <div class="detail-card">
+    <h2>Contatos</h2>
+    {% if users %}
+      <ul class="list">
+        {% for user in users %}
+          <li>
+            <div class="stack">
+              <strong>{{ user.name }}</strong>
+              <span class="muted">{{ user.role }}</span>
+              <a class="link" href="{{ url_for('public.mission_chat', slug=mission.slug, with=user.email) }}">Conversar</a>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="empty">Nenhum contato cadastrado.</div>
+    {% endif %}
+  </div>
+  <div class="detail-card">
+    <h2>Historico</h2>
+    {% if selected_user %}
+      <p class="muted">Conversa com {{ selected_user.name }}.</p>
+      {% if messages %}
+        <ul class="list">
+          {% for message in messages %}
+            <li>
+              <div class="stack">
+                <strong>{{ message.from_name or message.from_email }}</strong>
+                <span class="muted">{{ message.sent_at }}</span>
+                <span>{{ message.message }}</span>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="empty">Nenhuma mensagem ainda.</div>
+      {% endif %}
+    {% else %}
+      <div class="empty">Escolha um contato para ver a conversa.</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -9,3 +9,7 @@ class Config:
     MISSIONS_FILE = Path(
         os.getenv("MISSIONS_FILE", BASE_DIR / "instance" / "missions.json")
     )
+    FEEDBACK_FILE = Path(
+        os.getenv("FEEDBACK_FILE", BASE_DIR / "instance" / "feedback.json")
+    )
+    APP_VERSION = os.getenv("APP_VERSION", "0.1.0")

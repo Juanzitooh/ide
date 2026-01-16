@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Feedback - Ide e Pregai{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <span class="eyebrow">Feedback</span>
+  <h1>Relatar bug ou sugestao</h1>
+  <p class="lead">Sua opiniao ajuda a melhorar o app para todos.</p>
+</section>
+
+<section class="details">
+  <div class="detail-card">
+    {% if submitted %}
+      <h2>Obrigado!</h2>
+      <p class="muted">Feedback recebido com sucesso.</p>
+      {% if feedback_type %}
+        <span class="pill">{{ feedback_type }}</span>
+      {% endif %}
+      <a class="link" href="{{ url_for('public.index') }}">Voltar ao inicio</a>
+    {% else %}
+      <h2>Enviar feedback</h2>
+      {% if error %}
+        <p class="muted">{{ error }}</p>
+      {% endif %}
+      <form method="post">
+        <div class="stack">
+          <label class="muted" for="type">Tipo</label>
+          <select id="type" name="type">
+            <option value="bug">Bug</option>
+            <option value="sugestao">Sugestao</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+        <div class="stack" style="margin-top: 12px;">
+          <label class="muted" for="message">Descricao</label>
+          <textarea id="message" name="message" rows="4" required></textarea>
+        </div>
+        <div class="stack" style="margin-top: 12px;">
+          <label class="muted" for="name">Nome (opcional)</label>
+          <input id="name" name="name" type="text">
+        </div>
+        <div class="stack" style="margin-top: 12px;">
+          <label class="muted" for="email">Email (opcional)</label>
+          <input id="email" name="email" type="email">
+        </div>
+        <div class="stack" style="margin-top: 12px;">
+          <label class="muted" for="page">Pagina (opcional)</label>
+          <input id="page" name="page" type="text" placeholder="https://...">
+        </div>
+        <div style="margin-top: 16px;">
+          <button class="nav-link" type="submit">Enviar feedback</button>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+  <div class="detail-card">
+    <h2>O que analisar?</h2>
+    <p class="muted">Bugs, ideias de melhoria ou pontos de friccao no fluxo.</p>
+  </div>
+</section>
+{% endblock %}

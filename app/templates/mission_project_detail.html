@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.title }} - {{ mission.name }}{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <span class="eyebrow">Projeto</span>
+  <h1>{{ project.title }}</h1>
+  <p class="lead">{{ project.description }}</p>
+  <span class="badge">{{ project.status }} · {{ project.progress }}%</span>
+</section>
+
+<section class="details">
+  <div class="detail-card">
+    <h2>Progresso</h2>
+    <div class="progress">
+      <div class="progress-bar">
+        <span style="width: {{ project.progress }}%;"></span>
+      </div>
+      <span class="muted">{{ project.tasks_done }}/{{ project.tasks_total }} tarefas concluidas</span>
+    </div>
+  </div>
+  <div class="detail-card">
+    <h2>Reuniao</h2>
+    {% if project.meeting_link %}
+      <p class="muted">Link rapido para encontro do projeto.</p>
+      <a class="link" href="{{ project.meeting_link }}" target="_blank" rel="noreferrer">Abrir reuniao</a>
+    {% else %}
+      <p class="muted">Nenhum link de reuniao cadastrado.</p>
+      <a class="link" href="{{ url_for('auth.google_meet', slug=mission.slug, project_id=project.id) }}">Criar link Meet</a>
+    {% endif %}
+  </div>
+</section>
+
+<section>
+  <h2>Tarefas</h2>
+  {% if tasks %}
+    <ul class="list">
+      {% for task in tasks %}
+        <li>
+          <div class="stack">
+            <strong>{{ task.title }}</strong>
+            <span class="pill">{{ task.status }}</span>
+            {% if task.assignee %}
+              <span class="muted">Responsavel: {{ task.assignee }}</span>
+            {% endif %}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="empty">Nenhuma tarefa cadastrada.</div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -179,6 +179,86 @@
       margin-bottom: 10px;
     }
 
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(46, 70, 63, 0.1);
+      color: var(--pine);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .progress {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(46, 70, 63, 0.12);
+      overflow: hidden;
+    }
+
+    .progress-bar span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(120deg, var(--clay), var(--pine));
+      border-radius: inherit;
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .list li {
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(27, 26, 23, 0.08);
+    }
+
+    .stack {
+      display: grid;
+      gap: 6px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(27, 26, 23, 0.2);
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(27, 26, 23, 0.2);
+      background: rgba(255, 255, 255, 0.7);
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
     .link {
       display: inline-flex;
       align-items: center;
@@ -264,6 +344,17 @@
       border-top: 1px solid rgba(27, 26, 23, 0.12);
       color: rgba(27, 26, 23, 0.6);
       font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .footer-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     @keyframes fade-up {
@@ -316,12 +407,23 @@
           <a class="nav-link" href="{{ url_for('public.mission_projects', slug=mission.slug) }}">Projetos</a>
           <a class="nav-link" href="{{ url_for('public.mission_help', slug=mission.slug) }}">Como ajudar</a>
           <a class="nav-link" href="{{ url_for('public.mission_contact', slug=mission.slug) }}">Contato</a>
+          {% if current_user %}
+            <a class="nav-link" href="{{ url_for('public.mission_dashboard', slug=mission.slug) }}">Painel</a>
+          {% endif %}
+        {% endif %}
+        {% if current_user %}
+          <a class="nav-link" href="{{ url_for('auth.logout') }}">Sair</a>
+        {% else %}
+          <a class="nav-link" href="{{ url_for('auth.login') }}">Entrar</a>
         {% endif %}
       </nav>
     </header>
     {% block content %}{% endblock %}
     <footer class="site-footer">
-      Uma base aberta para apoiar missoes com transparencia e clareza.
+      <span>Uma base aberta para apoiar missoes com transparencia e clareza.</span>
+      <div class="footer-actions">
+        <a class="nav-link" href="{{ url_for('public.feedback') }}">Reportar</a>
+      </div>
     </footer>
   </div>
 </body>

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Entrar - Ide e Pregai{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <span class="eyebrow">Acesso</span>
+  <h1>Entrar com Google</h1>
+  <p class="lead">Use sua conta Google para acessar o painel da missao.</p>
+</section>
+
+<section class="details">
+  <div class="detail-card">
+    <h2>Login seguro</h2>
+    {% if oauth_ready %}
+      <p class="muted">Clique abaixo para autenticar com o Google.</p>
+      <a class="link" href="{{ url_for('auth.google_login') }}">Entrar com Google</a>
+    {% else %}
+      <p class="muted">OAuth ainda nao configurado no servidor.</p>
+      <p class="muted">Defina `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` e `GOOGLE_REDIRECT_URI`.</p>
+    {% endif %}
+  </div>
+  <div class="detail-card">
+    <h2>Por que usamos Google?</h2>
+    <p>Evita senhas locais, reduz suporte e melhora a seguranca.</p>
+  </div>
+</section>
+{% endblock %}

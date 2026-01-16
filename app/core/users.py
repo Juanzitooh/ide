@@ -1,4 +1,4 @@
-from typing import Dict, Iterable, List, Mapping, Set
+from typing import Dict, Iterable, List, Mapping, Optional, Set
 
 User = Dict[str, str]
 
@@ -57,3 +57,10 @@ def user_has_permission(user: Mapping[str, str], permission: str) -> bool:
 
 def users_with_role(users: Iterable[User], role: str) -> List[User]:
     return [user for user in users if user.get("role") == role]
+
+
+def find_user_by_email(users: Iterable[User], email: str) -> Optional[User]:
+    for user in users:
+        if user.get("email") == email:
+            return user
+    return None

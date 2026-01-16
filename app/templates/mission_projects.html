@@ -14,9 +14,16 @@
     {% if projects %}
       {% for project in projects %}
         <article class="card" style="--i: {{ loop.index0 }};">
-          <p class="meta">{{ project.status }}</p>
+          <p class="meta">{{ project.status }} · {{ project.progress }}%</p>
           <h2>{{ project.title }}</h2>
           <p>{{ project.description }}</p>
+          <div class="progress">
+            <div class="progress-bar">
+              <span style="width: {{ project.progress }}%;"></span>
+            </div>
+            <span class="muted">{{ project.tasks_done }}/{{ project.tasks_total }} tarefas concluidas</span>
+          </div>
+          <a class="link" href="{{ url_for('public.mission_project_detail', slug=mission.slug, project_id=project.id) }}">Ver detalhes</a>
         </article>
       {% endfor %}
     {% else %}

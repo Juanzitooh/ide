@@ -131,9 +131,29 @@
     },
     "projects": [
       {
+        "id": "projeto-piloto",
         "title": "Projeto piloto",
         "description": "Fluxo inicial para testar publicacoes.",
-        "status": "Ativo"
+        "status": "em_andamento",
+        "meeting_link": "https://meet.google.com/abc-defg-hij",
+        "tasks": [
+          {
+            "title": "Definir entregas principais",
+            "status": "done",
+            "assignee": "Luis Lider",
+            "weight": 2
+          },
+          {
+            "title": "Reunir materiais base",
+            "status": "doing",
+            "assignee": "Nina Voluntaria"
+          },
+          {
+            "title": "Publicar primeira atualizacao",
+            "status": "todo",
+            "assignee": "Eli Editor"
+          }
+        ]
       }
     ],
     "help": [
@@ -153,40 +173,63 @@
         "site": ""
       }
     },
+    "meeting_link": "https://meet.google.com/missao-teste",
+    "chat_messages": [
+      {
+        "from_email": "luis.lider@missao-teste.org",
+        "from_name": "Luis Lider",
+        "to_email": "nina.voluntaria@missao-teste.org",
+        "message": "Vamos alinhar as tarefas do projeto piloto hoje?",
+        "sent_at": "2024-01-15 10:30"
+      },
+      {
+        "from_email": "nina.voluntaria@missao-teste.org",
+        "from_name": "Nina Voluntaria",
+        "to_email": "luis.lider@missao-teste.org",
+        "message": "Sim, posso revisar a lista agora a tarde.",
+        "sent_at": "2024-01-15 11:10"
+      }
+    ],
     "users": [
       {
         "name": "Ana Admin",
         "email": "ana.admin@missao-teste.org",
+        "institutional_email": "ana.admin@missao-teste.org",
         "role": "admin",
         "status": "active"
       },
       {
         "name": "Luis Lider",
         "email": "luis.lider@missao-teste.org",
+        "institutional_email": "luis.lider@missao-teste.org",
         "role": "lider",
         "status": "active"
       },
       {
         "name": "Eli Editor",
         "email": "eli.editor@missao-teste.org",
+        "institutional_email": "eli.editor@missao-teste.org",
         "role": "editor",
         "status": "active"
       },
       {
         "name": "Fabi Financeiro",
         "email": "fabi.financeiro@missao-teste.org",
+        "institutional_email": "fabi.financeiro@missao-teste.org",
         "role": "financeiro",
         "status": "active"
       },
       {
         "name": "Nina Voluntaria",
         "email": "nina.voluntaria@missao-teste.org",
+        "institutional_email": "nina.voluntaria@missao-teste.org",
         "role": "voluntario",
         "status": "active"
       },
       {
         "name": "Paulo Apoiador",
         "email": "paulo.apoiador@missao-teste.org",
+        "institutional_email": "paulo.apoiador@missao-teste.org",
         "role": "apoiador",
         "status": "active"
       }

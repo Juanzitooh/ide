@@ -27,6 +27,9 @@ entender o que esta acontecendo no campo.
 - Dados em `instance/missions.json`.
 - Resolucao por slug (`/m/<slug>`) e por subdominio quando existir.
 - Paginas institucionais por missao (`/m/<slug>/sobre`, `/m/<slug>/projetos`, `/m/<slug>/ajuda`, `/m/<slug>/contato`).
+- Painel simples autenticado com Google (`/login`, `/m/<slug>/painel`).
+- Detalhes de projeto (`/m/<slug>/projetos/<project_id>`) e chat basico (`/m/<slug>/chat`).
+- Feedback simples para bugs e sugestoes (`/feedback`).
 - Templates basicos com layout pronto para evolucao.
 
 ## Estrutura do projeto
@@ -38,8 +41,11 @@ app/
   config.py
   core/
     guards.py
+    auth.py
+    progress.py
     tenant.py
   routes/
+    auth.py
     health.py
     public.py
   templates/
@@ -48,6 +54,10 @@ app/
     mission.html
     mission_about.html
     mission_projects.html
+    mission_project_detail.html
+    mission_dashboard.html
+    mission_chat.html
+    login.html
     mission_help.html
     mission_contact.html
     mission_not_found.html
@@ -83,6 +93,15 @@ http://localhost:5000/m/ide/sobre
 http://localhost:5000/m/ide/projetos
 http://localhost:5000/m/ide/ajuda
 http://localhost:5000/m/ide/contato
+```
+
+## Variaveis de ambiente (login Google)
+
+```bash
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+GOOGLE_REDIRECT_URI=http://localhost:5000/auth/google/callback
+SECRET_KEY=...
 ```
 
 ## Proximos passos sugeridos

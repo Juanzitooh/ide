@@ -11,6 +11,9 @@
   <span class="eyebrow">Missao</span>
   <h1>{{ mission.name }}</h1>
   <p class="lead">{{ mission.description }}</p>
+  {% if mission.status %}
+    <span class="badge">{{ mission.status }} · {{ mission.progress }}%</span>
+  {% endif %}
 </section>
 
 <section class="details">
