@@ -5,6 +5,8 @@ Indice dos principais documentos do projeto.
 - `docs/resumo.md`: resumo das demandas e direcao do produto.
 - `docs/features.md`: backlog de features com foco em baixo custo.
 - `docs/roles.md`: roles e permissoes por missao.
+- `docs/autenticacao_google.md`: guia de login com Google e seguranca.
+- `docs/infra_email_autenticacao.md`: proposta de email institucional e login.
 - `docs/responsividade.md`: guia de responsividade para HTML/CSS.
 - `docs/pesquisa_demandas_missionarios_brasil.md`: pesquisa resumida.
 - `docs/missoes.md`: pesquisa completa.
