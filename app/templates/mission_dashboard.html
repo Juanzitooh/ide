@@ -32,14 +32,59 @@
       <a class="link" href="{{ url_for('auth.google_meet', slug=mission.slug) }}">Criar link Meet</a>
     {% endif %}
   </div>
+  <div class="detail-card">
+    <h2>Financeiro</h2>
+    {% if can_view_finance %}
+      <p class="muted">Acompanhe entradas, saidas e prestacao de contas.</p>
+      <a class="link" href="{{ url_for('public.mission_finance', slug=mission.slug) }}">Abrir financeiro</a>
+    {% else %}
+      <p class="muted">Somente Admin e Financeiro acessam essa area.</p>
+    {% endif %}
+  </div>
 </section>
 
+{% if recent_closed %}
 <section>
-  <h2>Projetos em andamento</h2>
+  <h2>Projetos encerrados recentemente</h2>
+  <ul class="list">
+    {% for project in recent_closed %}
+      <li>
+        <div class="stack">
+          <strong>{{ project.title }}</strong>
+          <span class="muted">Encerrado em {{ project.closed_at }}</span>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<section>
+  <div class="details">
+    <div class="detail-card">
+      <h2>Projetos da missao</h2>
+      <p class="muted">Acompanhe andamento e status financeiro.</p>
+    </div>
+    <div class="detail-card">
+      <h2>Filtro</h2>
+      <label class="muted">
+        <input id="toggle-closed" type="checkbox">
+        Mostrar projetos encerrados
+      </label>
+    </div>
+  </div>
   <div class="grid">
     {% if mission.projects %}
       {% for project in mission.projects %}
-        <article class="card" style="--i: {{ loop.index0 }};">
+        {% set finance_project = None %}
+        {% if finance and finance.projects %}
+          {% for item in finance.projects %}
+            {% if item.id == project.id %}
+              {% set finance_project = item %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        <article class="card" style="--i: {{ loop.index0 }};" data-status="{{ project.status }}">
           <p class="meta">{{ project.status }} · {{ project.progress }}%</p>
           <h2>{{ project.title }}</h2>
           <p>{{ project.description }}</p>
@@ -49,6 +94,11 @@
             </div>
             <span class="muted">{{ project.tasks_done }}/{{ project.tasks_total }} tarefas concluidas</span>
           </div>
+          {% if finance_project %}
+            <span class="muted">Orcamento: R$ {{ "%.2f"|format(finance_project.budget) }}</span>
+            <span class="muted">Gasto: R$ {{ "%.2f"|format(finance_project.spent) }}</span>
+            <span class="muted">Restante: R$ {{ "%.2f"|format(finance_project.remaining) }}</span>
+          {% endif %}
           {% if project.meeting_link %}
             <a class="link" href="{{ project.meeting_link }}" target="_blank" rel="noreferrer">Reuniao do projeto</a>
           {% else %}
@@ -62,6 +112,27 @@
     {% endif %}
   </div>
 </section>
+
+<script>
+  const toggleClosed = document.getElementById("toggle-closed");
+  if (toggleClosed) {
+    const applyFilter = () => {
+      const showClosed = toggleClosed.checked;
+      document.querySelectorAll("[data-status]").forEach((card) => {
+        const status = card.getAttribute("data-status") || "";
+        if (status === "concluida" && !showClosed) {
+          card.style.display = "none";
+        } else {
+          card.style.display = "";
+        }
+      });
+    };
+    applyFilter();
+    toggleClosed.addEventListener("change", () => {
+      applyFilter();
+    });
+  }
+</script>
 
 <section>
   <h2>Equipe e contato rapido</h2>

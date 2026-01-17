@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %}{{ mission.name }} - Financeiro{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <span class="eyebrow">Financeiro</span>
+  <h1>Prestacao de contas</h1>
+  <p class="lead">Entradas, saidas e saldo da missao em um painel simples.</p>
+  <a class="link" href="{{ url_for('public.mission_dashboard', slug=mission.slug) }}">Voltar ao painel</a>
+</section>
+
+<section class="details">
+  <div class="detail-card">
+    <h2>Caixa central</h2>
+    <dl>
+      <dt>Entradas</dt>
+      <dd>R$ {{ "%.2f"|format(state.central.total_in) }}</dd>
+      <dt>Saidas</dt>
+      <dd>R$ {{ "%.2f"|format(state.central.total_out) }}</dd>
+      <dt>Saldo</dt>
+      <dd>R$ {{ "%.2f"|format(state.central.balance) }}</dd>
+      <dt>Orcamento total</dt>
+      <dd>R$ {{ "%.2f"|format(state.total_budget) }}</dd>
+      <dt>Disponivel</dt>
+      <dd>R$ {{ "%.2f"|format(state.available) }}</dd>
+    </dl>
+  </div>
+  <div class="detail-card">
+    <h2>Status</h2>
+    {% if saved %}
+      <span class="badge">Lancamento salvo</span>
+    {% endif %}
+    {% if error %}
+      <p class="muted">{{ error }}</p>
+    {% else %}
+      <p class="muted">Mantenha os registros atualizados para gerar relatorios.</p>
+    {% endif %}
+  </div>
+</section>
+
+{% if periods %}
+<section>
+  <h2>Panorama rapido</h2>
+  <div class="details">
+    <div class="detail-card">
+      <h2>Hoje</h2>
+      <p class="muted">{{ periods.daily.key }}</p>
+      <p class="muted">Entradas: R$ {{ "%.2f"|format(periods.daily.total_in) }}</p>
+      <p class="muted">Saidas: R$ {{ "%.2f"|format(periods.daily.total_out) }}</p>
+    </div>
+    <div class="detail-card">
+      <h2>Semana</h2>
+      <p class="muted">{{ periods.weekly.key }}</p>
+      <p class="muted">Entradas: R$ {{ "%.2f"|format(periods.weekly.total_in) }}</p>
+      <p class="muted">Saidas: R$ {{ "%.2f"|format(periods.weekly.total_out) }}</p>
+    </div>
+    <div class="detail-card">
+      <h2>Mes</h2>
+      <p class="muted">{{ periods.monthly.key }}</p>
+      <p class="muted">Entradas: R$ {{ "%.2f"|format(periods.monthly.total_in) }}</p>
+      <p class="muted">Saidas: R$ {{ "%.2f"|format(periods.monthly.total_out) }}</p>
+    </div>
+    <div class="detail-card">
+      <h2>Ano</h2>
+      <p class="muted">{{ periods.yearly.key }}</p>
+      <p class="muted">Entradas: R$ {{ "%.2f"|format(periods.yearly.total_in) }}</p>
+      <p class="muted">Saidas: R$ {{ "%.2f"|format(periods.yearly.total_out) }}</p>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section>
+  <h2>Lancamentos</h2>
+  {% if entries %}
+    <ul class="list">
+      {% for entry in entries %}
+        <li>
+          <div class="stack">
+            <strong>{{ entry.description }}</strong>
+            <span class="muted">{{ entry.date }} · {{ entry.type }}</span>
+            <span class="muted">R$ {{ "%.2f"|format(entry.amount) }}</span>
+            {% if entry.project_id %}
+              <span class="muted">Projeto: {{ entry.project_id }}</span>
+            {% endif %}
+            {% if entry.category %}
+              <span class="muted">Categoria: {{ entry.category }}</span>
+            {% endif %}
+            {% if entry.receipt_link %}
+              <a class="link" href="{{ entry.receipt_link }}" target="_blank" rel="noreferrer">Comprovante</a>
+            {% endif %}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="empty">Nenhum lancamento registrado.</div>
+  {% endif %}
+</section>
+
+{% if state.projects %}
+<section>
+  <h2>Orcamentos por projeto</h2>
+  <ul class="list">
+    {% for project in state.projects %}
+      <li>
+        <div class="stack">
+          <strong>{{ project.title }}</strong>
+          <span class="muted">Orcamento: R$ {{ "%.2f"|format(project.budget) }}</span>
+          <span class="muted">Gasto: R$ {{ "%.2f"|format(project.spent) }}</span>
+          <span class="muted">Restante: R$ {{ "%.2f"|format(project.remaining) }}</span>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{% if can_write or budget_projects %}
+<section>
+  <h2>Novo lancamento</h2>
+  <div class="detail-card">
+    <form method="post">
+      {% if not can_write and budget_projects %}
+        <p class="muted">Somente saidas vinculadas a projeto com orcamento.</p>
+      {% endif %}
+      <div class="stack">
+        <label class="muted" for="date">Data</label>
+        <input id="date" name="date" type="date" required>
+      </div>
+      <div class="stack" style="margin-top: 12px;">
+        <label class="muted" for="type">Tipo</label>
+        <select id="type" name="type">
+          <option value="entrada">Entrada</option>
+          <option value="saida">Saida</option>
+        </select>
+      </div>
+      <div class="stack" style="margin-top: 12px;">
+        <label class="muted" for="amount">Valor</label>
+        <input id="amount" name="amount" type="text" placeholder="0,00" required>
+      </div>
+      <div class="stack" style="margin-top: 12px;">
+        <label class="muted" for="description">Descricao</label>
+        <input id="description" name="description" type="text" required>
+      </div>
+      {% if budget_projects %}
+      {% if budget_projects %}
+      <div class="stack" style="margin-top: 12px;">
+        <label class="muted" for="project_id">
+          Projeto {% if not can_write %}(obrigatorio){% endif %}
+        </label>
+        <select id="project_id" name="project_id" {% if not can_write %}required{% endif %}>
+          <option value="">Sem projeto</option>
+          {% for project in budget_projects %}
+            <option value="{{ project.id }}">{{ project.title }} (orcamento)</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+      {% endif %}
+      <div class="stack" style="margin-top: 12px;">
+        <label class="muted" for="category">Categoria (opcional)</label>
+        <input id="category" name="category" type="text">
+      </div>
+      <div class="stack" style="margin-top: 12px;">
+        <label class="muted" for="receipt_link">Comprovante (link)</label>
+        <input id="receipt_link" name="receipt_link" type="text" placeholder="https://">
+      </div>
+      <div style="margin-top: 16px;">
+        <input type="hidden" name="action" value="entry">
+        <button class="nav-link" type="submit">Salvar lancamento</button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endif %}
+
+{% if can_read %}
+<section>
+  <h2>Relatorios</h2>
+  <div class="detail-card">
+    <form method="post">
+      <input type="hidden" name="action" value="export_csv">
+      <button class="nav-link" type="submit">Exportar CSV</button>
+    </form>
+    {% if can_write %}
+      <form method="post" style="margin-top: 12px;">
+        <input type="hidden" name="action" value="save_report">
+        <button class="nav-link" type="submit">Salvar panorama</button>
+      </form>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+{% if can_write and state.projects %}
+<section>
+  <h2>Ajustar orcamento</h2>
+  <div class="detail-card">
+    <form method="post">
+      <div class="stack">
+        <label class="muted" for="budget_project_id">Projeto</label>
+        <select id="budget_project_id" name="project_id" required>
+          {% for project in budget_projects %}
+            <option value="{{ project.id }}">{{ project.title }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="stack" style="margin-top: 12px;">
+        <label class="muted" for="budget">Orcamento</label>
+        <input id="budget" name="budget" type="text" placeholder="0,00" required>
+      </div>
+      <div style="margin-top: 16px;">
+        <input type="hidden" name="action" value="budget">
+        <button class="nav-link" type="submit">Salvar orcamento</button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
