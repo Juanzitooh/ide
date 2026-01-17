@@ -21,4 +21,8 @@ if [ ! -f ".env" ]; then
   cp .env.example .env
 fi
 
+if [ "${USE_GUNICORN:-0}" = "1" ]; then
+  exec gunicorn -c gunicorn.conf.py app:app
+fi
+
 exec python app.py
