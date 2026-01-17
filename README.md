@@ -30,6 +30,11 @@ entender o que esta acontecendo no campo.
 - Painel simples autenticado com Google (`/login`, `/m/<slug>/painel`).
 - Detalhes de projeto (`/m/<slug>/projetos/<project_id>`) e chat basico (`/m/<slug>/chat`).
 - Feedback simples para bugs e sugestoes (`/feedback`).
+- Financeiro basico por missao (`/m/<slug>/financeiro`).
+- Lancamentos com vinculo opcional a projetos com orcamento.
+- Caixa central com orcamentos distribuiveis por projeto.
+- Panorama financeiro diario/semanal/mensal/anual com exportacao CSV.
+- Dashboard da missao mostra projetos e dados financeiros com filtro de encerrados.
 - Templates basicos com layout pronto para evolucao.
 
 ## Estrutura do projeto
@@ -103,6 +108,52 @@ GOOGLE_CLIENT_SECRET=...
 GOOGLE_REDIRECT_URI=http://localhost:5000/auth/google/callback
 SECRET_KEY=...
 ```
+
+## Usar MySQL (MariaDB) + Redis
+
+1. Crie o banco e importe o schema:
+
+```bash
+mysql -u root -p -e "CREATE DATABASE ide;"
+mysql -u root -p ide < schema.sql
+```
+
+2. Defina as variaveis:
+
+```bash
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=seu_usuario
+MYSQL_PASSWORD=sua_senha
+MYSQL_DB=ide
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_TTL_MISSION=600
+REDIS_TTL_LIST=120
+```
+
+Com isso, o app passa a ler/gravar no MySQL e usar Redis como cache.
+
+## Produção com Gunicorn
+
+```bash
+USE_GUNICORN=1 ./deploy.sh
+```
+
+Variaveis opcionais:
+
+- `GUNICORN_WORKERS` (padrao: 2)
+- `GUNICORN_THREADS` (padrao: 4)
+- `GUNICORN_TIMEOUT` (padrao: 30)
+
+## Rodar testes rapidos
+
+```bash
+python app.py --test
+```
+
+O relatório é salvo em `instance/test_report.json`.
 
 ## Proximos passos sugeridos
 
